@@ -11,6 +11,9 @@ const login = async (req, res) => {
             if (await bcrypt.compare(req.body.password, data.password)) {
                 // Generate a JWT token with the user's ID
                 const token = jwt.sign({ userId: data._id }, 'your-secret-key', { expiresIn: '1h' });
+
+                res.cookie('token', token, { httpOnly: true, sameSite: 'strict', secure: false }); // secure true to allow https only
+                
                 res.status(200).send({ result: "Login successfully", access_token: token });
             } else {
                 res.status(401).send({ result: "Fail", message: "Invalid Username or Password" });
